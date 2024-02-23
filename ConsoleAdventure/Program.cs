@@ -2,6 +2,8 @@
 // Use for putting notes in for coming back later.                     *******|
 //----------------------------------------------------------------------------|
 
+using System.Xml.XPath;
+
 bool game = true;
 string input;
 
@@ -34,7 +36,6 @@ Armors.Add(Leather);
 Armors.Add(Chainmail);
 Armors.Add(PlateArmor);
 
-
 Item SmallPotion = new Item("Potion", "Small Potion", 5, 3);
 Item MediumPotion = new Item("Potion", "Medium Potion", 10, 6);
 Item LargePotion = new Item("Potion", "Large Potion", 15, 9);
@@ -45,9 +46,8 @@ Potions.Add(MediumPotion);
 Potions.Add(LargePotion);
 
 //Makes the Player and all Monsters of the Character class. And Create Players Inventory
-
-Character PlayerCharacter = new Character("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored);
 List<Item> PlayerInventory = new List<Item>();
+Character PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored, 0 , PlayerInventory);
 
 // Ints to store the amount of potions the player has
 
@@ -109,7 +109,7 @@ void Fight(Character Player, Character target)
         {
             Inventory();
         }
-    }  
+    }
     if (PlayerCharacter.Hp > 0)
     {
         Console.WriteLine(Foe.Name + " is dead.");
@@ -405,6 +405,21 @@ public class Character
 
 }
 
+// Creates Player Subclass
+
+public class Player : Character
+{
+    public int Xp { get; set; }
+    public List<Item> Bag { get; set; }
+    public Player(string name, int hp, int str, int speed, int con, int res, int value, Item weapon, Item armor, int xp, List<Item> bag)
+        : base(name, hp, str, speed, con, res, value, weapon, armor)
+    {
+        Xp = xp;
+        Bag = bag;
+    }
+
+}
+
 // Creates Item Class
 
 public class Item
@@ -424,60 +439,4 @@ public class Item
         Value = value;
     }
 }
-
-//Creates Weapon Class
-
-//public class Weapon
-//{
-//public string WeaponName { get; set; }
-//public int WeaponDamage { get; set; }
-//public int WeaponValue { get; set; }
-
-// Weapon Constructor
-
-//public Weapon(string name, int damage, int value)
-//{
-//WeaponName = name;
-//WeaponDamage = damage;
-//WeaponValue = value;
-//    }
-//}
-
-//Creates Potion Class
-
-//public class Potion
-//{
-//public string PotionName { get; set; }
-//public int PotionDamage { get; set; }
-//public int PotionValue { get; set; }
-
-// Weapon Constructor
-
-//public Potion(string name, int damage, int value)
-//{
-//PotionName = name;
-//PotionDamage = damage;
-//PotionValue = value;
-//    }
-//}
-
-//Creates Armor Class
-
-//public class Armor
-//{
-//public string ArmorName { get; set; }
-//public int ArmorDamage { get; set; }
-//public int ArmorValue { get; set; }
-
-// Weapon Constructor
-
-//public Armor(string name, int damage, int value)
-//{
-//ArmorName = name;
-//ArmorDamage = damage;
-//ArmorValue = value;
-//    }
-//}
-
-// 
 
