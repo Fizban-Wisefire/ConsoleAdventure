@@ -47,7 +47,7 @@ Potions.Add(LargePotion);
 
 //Makes the Player and all Monsters of the Character class. And Create Players Inventory
 List<Item> PlayerInventory = new List<Item>();
-Character PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored, 0, 0, PlayerInventory);
+Player PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored, 0, 0, PlayerInventory);
 
 // Ints to store the amount of potions the player has
 
@@ -84,11 +84,11 @@ void GameOver()
     game = false;
 }
 
-void Fight(Character Player, Character target)
+void Fight(Character target)
 {
 
     Character Foe = target.Clone();
-    Console.WriteLine(Player.Name + " is fighting " + Foe.Name);
+    Console.WriteLine(PlayerCharacter.Name + " is fighting " + Foe.Name);
 
     while (PlayerCharacter.Hp > 0 && Foe.Hp > 0)
     { 
@@ -104,7 +104,7 @@ void Fight(Character Player, Character target)
                 Console.WriteLine($"They dropped {Foe.Value} gold.");
             }
             Console.WriteLine("It is the foes turn. they attack!");
-            Foe.Attack(Player);
+            Foe.Attack(PlayerCharacter);
         } else if (input == "2")
         {
             Inventory();
@@ -113,7 +113,8 @@ void Fight(Character Player, Character target)
     if (PlayerCharacter.Hp > 0)
     {
         Console.WriteLine(Foe.Name + " is dead.");
-        Player.Value += Foe.Value;
+        PlayerCharacter.GainXp(Foe.Value);
+        PlayerCharacter.Value += Foe.Value;
         Console.WriteLine("You gained " + Foe.Value + " gold and now have " + PlayerCharacter.Value + ".");
     } else 
     {
@@ -325,7 +326,7 @@ while (game)
         if (input == "1")
         {
             Character target = Monsters[random.Next(0, Monsters.Count)];
-            Fight(PlayerCharacter, target);
+            Fight(target);
             choice = false;
 
         }
@@ -420,7 +421,62 @@ public class Player : Character
         Bag = bag;
     }
 
-}
+    void StatIncrease(int i)
+    {
+        bool finished = false;
+        while (finished != true)
+        {
+            Console.WriteLine($"You have {i} stat points left. What would you like to increase?");
+            Console.WriteLine("1) Strength 2) Speed 3) Constitution 4) Resistance");
+            string input = Console.ReadLine();
+            if (input == "1")
+            {
+                Str += 1;
+                finished = true;
+            }
+            else if (input == "2")
+            {
+                Speed += 1;
+                finished = true;
+            }
+            else if (input == "3")
+            {
+                Con += 1;
+                finished = true;
+            }
+            else if (input == "4")
+            {
+                Res += 1;
+                finished = true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Option");
+            };
+        }
+    }
+
+    void LevelUp()
+    {
+        for (int i = 3; i >= 1; i--)
+        {
+            Level++;
+            StatIncrease(i);
+        }
+    }
+
+    public void GainXp(int mobXp)
+    {
+        Xp += mobXp;
+        if (Xp <= Math.Pow(10, Level))
+        {
+            LevelUp();
+        } else if (Xp < 0)
+        {
+
+        }
+
+    } }
 
 // Creates Item Class
 
