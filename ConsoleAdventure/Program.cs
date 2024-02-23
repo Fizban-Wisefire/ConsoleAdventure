@@ -47,7 +47,7 @@ Potions.Add(LargePotion);
 
 //Makes the Player and all Monsters of the Character class. And Create Players Inventory
 List<Item> PlayerInventory = new List<Item>();
-Character PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored, 0 , PlayerInventory);
+Character PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored, 0, 0, PlayerInventory);
 
 // Ints to store the amount of potions the player has
 
@@ -410,11 +410,13 @@ public class Character
 public class Player : Character
 {
     public int Xp { get; set; }
+    public int Level { get; set; }
     public List<Item> Bag { get; set; }
-    public Player(string name, int hp, int str, int speed, int con, int res, int value, Item weapon, Item armor, int xp, List<Item> bag)
+    public Player(string name, int hp, int str, int speed, int con, int res, int value, Item weapon, Item armor, int xp, int level, List<Item> bag)
         : base(name, hp, str, speed, con, res, value, weapon, armor)
     {
         Xp = xp;
+        Level = level;
         Bag = bag;
     }
 
