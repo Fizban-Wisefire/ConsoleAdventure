@@ -2,8 +2,6 @@
 // Use for putting notes in for coming back later.                     *******|
 //----------------------------------------------------------------------------|
 
-using System.Xml.XPath;
-
 bool game = true;
 string input;
 
@@ -468,7 +466,7 @@ public class Player : Character
     public void GainXp(int mobXp)
     {
         Xp += mobXp;
-        if (Xp <= Math.Pow(10, Level))
+        if (Xp <= Math.Pow(10, Level) && (Level < 10))
         {
             LevelUp();
         } else if (Xp < 0)
