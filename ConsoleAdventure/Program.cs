@@ -57,6 +57,9 @@ int PlayerLgPotion = 0;
 // Should I make a subclass for mobs?? Maybe add them in while creating mobs?  *******|
 //----------------------------------------------------------------------------|
 
+Character Empty = new Character(" ", 0, 0, 0, 0, 0, 0, Unarmed, Unarmored);
+Character Foe = Empty;
+
 Character Goblin = new Character("Goblin", 1, 2, 5, 3, 3, 1, Unarmed, Unarmored);
 Character Orc = new Character("Orc", 2, 2, 5, 3, 3, 2, Unarmed, Unarmored);
 Character Ogre = new Character("Ogre", 3, 2, 5, 3, 3, 3, Unarmed, Unarmored);
@@ -85,7 +88,7 @@ void GameOver()
 void Fight(Character target)
 {
 
-    Character Foe = target.Clone();
+    Foe = target.Clone();
     Console.WriteLine(PlayerCharacter.Name + " is fighting " + Foe.Name);
 
     while (PlayerCharacter.Hp > 0 && Foe.Hp > 0)
@@ -95,6 +98,7 @@ void Fight(Character target)
         input = Console.ReadLine();
         if (input == "1")
         {
+            RefreshScreen();
             PlayerCharacter.Attack(Foe);
             if (Foe.Hp <= 0)
             {
@@ -105,6 +109,7 @@ void Fight(Character target)
             Foe.Attack(PlayerCharacter);
         } else if (input == "2")
         {
+            RefreshScreen();
             Inventory();
         }
     }
@@ -114,19 +119,29 @@ void Fight(Character target)
         PlayerCharacter.GainXp(Foe.Value);
         PlayerCharacter.Value += Foe.Value;
         Console.WriteLine("You gained " + Foe.Value + " gold and now have " + PlayerCharacter.Value + ".");
+        Foe = null;
     } else 
     {
         Console.WriteLine(PlayerCharacter.Name + " is dead.");
         GameOver();
     }
+    Foe = Empty;
 }
+
+void RefreshScreen()
+{
+    Console.Clear();
+    Console.WriteLine("          ----------   CONSOLE ADVENTURE   ----------          ");
+}
+
 void Shop()
 { 
+    RefreshScreen();
     Console.WriteLine("This is the store");
     Console.WriteLine("You have " + PlayerCharacter.Value + " gold.");
     Console.WriteLine("What would you like to shop for? 1) Weapons 2) Armor 3) Potions");
     input = Console.ReadLine();
-
+    RefreshScreen();
     // Lists and Allows Player to buy weapons after checking if he has enough gold for the selected weapon
 
     if (input == "1")
@@ -303,7 +318,7 @@ while (game)
 
     //Main Menu Print
 
-    Console.WriteLine("Welcome to Console Adventure");
+    RefreshScreen();
     Console.WriteLine("Press Enter to Start");
     Console.ReadLine();
 
@@ -317,10 +332,12 @@ while (game)
     while (choice)
     {
 
+        RefreshScreen();
+
         Console.WriteLine("What would you like to do? 1)Fight! 2)Shop 3)Inventory 4)Info");
 
         input = Console.ReadLine();
-
+        RefreshScreen();
         if (input == "1")
         {
             Character target = Monsters[random.Next(0, Monsters.Count)];
