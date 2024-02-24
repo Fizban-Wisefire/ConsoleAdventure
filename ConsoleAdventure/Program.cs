@@ -264,8 +264,10 @@ void Shop()
         } else
         {
             Console.WriteLine("Invalid Option or not enough gold.");
+            input = Console.ReadLine();
             Shop();
         }
+        input = Console.ReadLine();
     }
 
 }
@@ -294,18 +296,21 @@ void Inventory()
     else if ((input == "3") && (PlayerSmPotion > 0))
     {
         PlayerCharacter.ChangeHealth(SmallPotion.Value);
+        PlayerSmPotion -= 1;
         Console.WriteLine($"You have used a small health potion to heal {SmallPotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
     }
     else if ((input == "4") && (PlayerPotion > 0))
     {
         PlayerCharacter.ChangeHealth(MediumPotion.Value);
+        PlayerPotion -= 1;
         Console.WriteLine($"You have used a medium health potion to heal {MediumPotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
     }
     else if ((input == "5") && (PlayerLgPotion > 0))
     {
         PlayerCharacter.ChangeHealth(LargePotion.Value);
+        PlayerLgPotion -= 1;
         Console.WriteLine($"You have used a small health potion to heal {LargePotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
     }
