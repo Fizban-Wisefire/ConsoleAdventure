@@ -60,12 +60,16 @@ int PlayerLgPotion = 0;
 Character Empty = new Character(" ", 0, 0, 0, 0, 0, 0, Unarmed, Unarmored);
 Character Foe = Empty;
 
-Character Goblin = new Character("Goblin", 1, 2, 5, 3, 3, 1, Unarmed, Unarmored);
-Character Orc = new Character("Orc", 2, 2, 5, 3, 3, 2, Unarmed, Unarmored);
-Character Ogre = new Character("Ogre", 3, 2, 5, 3, 3, 3, Unarmed, Unarmored);
-Character Bandit = new Character("Bandit", 4, 2, 5, 3, 3, 4, Unarmed, Unarmored);
-Character BanditCaptain = new Character("Bandit Captain", 5, 2, 5, 3, 3, 5, Unarmed, Unarmored);
-Character Dragon = new Character("Dragon", 6, 2, 5, 3, 3, 6, Unarmed, Unarmored);
+Character Kobold = new Character("Kobold", 2, 1, 1, 1, 1, 1, Unarmed, Unarmored);
+Character Goblin = new Character("Goblin", 1, 2, 5, 3, 3, 2, Unarmed, Unarmored);
+Character Orc = new Character("Orc", 2, 2, 5, 3, 3, 4, Unarmed, Unarmored);
+Character Ogre = new Character("Ogre", 3, 2, 5, 3, 3, 8, Unarmed, Unarmored);
+Character Bandit = new Character("Bandit", 4, 2, 5, 3, 3, 16, Unarmed, Unarmored);
+Character BanditCaptain = new Character("Bandit Captain", 5, 2, 5, 3, 3, 32, Unarmed, Unarmored);
+Character Giant = new Character("Giant", 10, 10, 2, 10, 2, 64, Unarmed, Unarmored);
+Character Goliath = new Character("Goliath", 15, 12, 2, 10, 10, 128, Unarmed, Unarmored);
+Character Roc = new Character("Roc", 12, 14, 14, 8, 10, 256, Unarmed, Unarmored);
+Character Dragon = new Character("Dragon", 6, 2, 5, 3, 3, 512, Unarmed, Unarmored);
 
 //Adds all of the Monsters into a Monsters List
 
@@ -106,14 +110,24 @@ void Fight(Character target)
                 Console.WriteLine($"They dropped {Foe.Value} gold.");
             }
             Console.WriteLine("It is the foes turn. they attack!");
+            if (Foe.Hp > 0)
+            {
             Foe.Attack(PlayerCharacter);
+            }
         } else if (input == "2")
         {
             RefreshScreen();
             Inventory();
+        } else if (input == "3")
+        {
+            Foe.ChangeHealth(-Foe.Hp);
         }
     }
-    if (PlayerCharacter.Hp > 0)
+    if (input == "3")
+    {
+        Console.WriteLine("You run away.");
+    }
+    else if (PlayerCharacter.Hp > 0)
     {
         Console.WriteLine(Foe.Name + " is dead.");
         PlayerCharacter.GainXp(Foe.Value);
@@ -125,6 +139,7 @@ void Fight(Character target)
         Console.WriteLine(PlayerCharacter.Name + " is dead.");
         GameOver();
     }
+    Console.ReadLine();
     Foe = Empty;
 }
 
@@ -278,21 +293,21 @@ void Inventory()
     }
     else if ((input == "3") && (PlayerSmPotion > 0))
     {
+        PlayerCharacter.ChangeHealth(SmallPotion.Value);
         Console.WriteLine($"You have used a small health potion to heal {SmallPotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
-        PlayerCharacter.ChangeHealth(SmallPotion.Value);
     }
     else if ((input == "4") && (PlayerPotion > 0))
     {
+        PlayerCharacter.ChangeHealth(MediumPotion.Value);
         Console.WriteLine($"You have used a medium health potion to heal {MediumPotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
-        PlayerCharacter.ChangeHealth(MediumPotion.Value);
     }
     else if ((input == "5") && (PlayerLgPotion > 0))
     {
+        PlayerCharacter.ChangeHealth(LargePotion.Value);
         Console.WriteLine($"You have used a small health potion to heal {LargePotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
-        PlayerCharacter.ChangeHealth(LargePotion.Value);
     }
     else if (((input == "3") && (PlayerSmPotion <= 0)) || ((input == "4") && (PlayerPotion <= 0)) || ((input == "5") && (PlayerLgPotion <= 0)))
     {
