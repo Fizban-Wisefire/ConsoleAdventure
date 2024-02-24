@@ -257,13 +257,14 @@ void Shop()
 
 void Inventory()
 {
+    RefreshScreen();
     Console.WriteLine("Weapon: " + PlayerCharacter.Weapon.Name);
     Console.WriteLine("Armor: " + PlayerCharacter.Armor.Name);
     Console.WriteLine("Small Potions: " + PlayerSmPotion);
     Console.WriteLine("Medium Potions: " + PlayerPotion);
     Console.WriteLine("Large Potions: " + PlayerLgPotion);
     Console.WriteLine("Would you like to inspect your gear or use a potion?");
-    Console.WriteLine("1) Weapon 2) Armor 3) Small Potion 4) Medium Potion 5 Large Potion");
+    Console.WriteLine("1) Weapon 2) Armor 3) Small Potion 4) Medium Potion 5) Large Potion");
     input = Console.ReadLine();
     if (input == "1")
     {
@@ -273,32 +274,36 @@ void Inventory()
     else if (input == "2")
     {
         Console.WriteLine($"Armor: {PlayerCharacter.Armor.Name}");
-        Console.WriteLine($"Blocks: {PlayerCharacter.Armor.Effect}");
+        Console.WriteLine($"Blocks: {PlayerCharacter.Armor.Effect} damage");
     }
     else if ((input == "3") && (PlayerSmPotion > 0))
     {
         Console.WriteLine($"You have used a small health potion to heal {SmallPotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
+        PlayerCharacter.ChangeHealth(SmallPotion.Value);
     }
     else if ((input == "4") && (PlayerPotion > 0))
     {
         Console.WriteLine($"You have used a medium health potion to heal {MediumPotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
-
+        PlayerCharacter.ChangeHealth(MediumPotion.Value);
     }
     else if ((input == "5") && (PlayerLgPotion > 0))
     {
         Console.WriteLine($"You have used a small health potion to heal {LargePotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
-    } 
+        PlayerCharacter.ChangeHealth(LargePotion.Value);
+    }
     else if (((input == "3") && (PlayerSmPotion <= 0)) || ((input == "4") && (PlayerPotion <= 0)) || ((input == "5") && (PlayerLgPotion <= 0)))
     {
         Console.WriteLine("You do not have any of those.");
+        Console.ReadLine();
         Inventory();
     } 
     else {
-
+        Console.WriteLine("Invalid Option");
     }
+    Console.ReadLine();
 }
 
 void Info()
@@ -417,6 +422,11 @@ public class Character
         Console.WriteLine(Name + " attacked " + target.Name);
         target.Hp -= Str;
         Console.WriteLine($"{Name} dealt {Str + Weapon.Effect} damage to {target.Name}");
+    }
+
+    public void ChangeHealth(int num)
+    {
+        Hp += num;
     }
 
 }
