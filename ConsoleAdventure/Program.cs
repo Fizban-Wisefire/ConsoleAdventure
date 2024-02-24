@@ -440,7 +440,7 @@ public class Character
     public void Attack(Character target)
     {
         Console.WriteLine(Name + " attacked " + target.Name);
-        target.Hp -= Str;
+        target.ChangeHealth(Str + Weapon.Effect);
         Console.WriteLine($"{Name} dealt {Str + Weapon.Effect} damage to {target.Name}");
     }
 
