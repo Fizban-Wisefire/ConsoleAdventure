@@ -43,14 +43,8 @@ namespace ConsoleAdventure
         public void Attack(Character target)
         {
             Console.WriteLine(Name + " attacked " + target.Name);
-
-            Console.WriteLine($"{target.Name} {target.Hp}");
-
             target.ChangeHealth(-(Str + Weapon.Effect));
             Console.WriteLine($"{Name} dealt {Str + Weapon.Effect} damage to {target.Name}");
-
-            Console.WriteLine($"{target.Name} {target.Hp}");
-
         }
 
         public void ChangeHealth(int num)
