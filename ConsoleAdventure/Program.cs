@@ -2,6 +2,8 @@
 // Use for putting notes in for coming back later.                     *******|
 //----------------------------------------------------------------------------|
 
+using ConsoleAdventure;
+
 bool game = true;
 string input;
 
@@ -27,7 +29,7 @@ Weapons.Add(Claymore);
 Item Unarmored = new Item("Armor", "Unarmored", 0, 0);
 Item Leather = new Item("Armor", "Leather", 2, 5);
 Item Chainmail = new Item("Armor", "Chainmail", 4, 10);
-Item PlateArmor = new Item("Armor", "Plate Armor", 6, 20); 
+Item PlateArmor = new Item("Armor", "Plate Armor", 6, 20);
 
 List<Item> Armors = new List<Item>();
 Armors.Add(Leather);
@@ -96,7 +98,7 @@ void Fight(Character target)
     Console.WriteLine(PlayerCharacter.Name + " is fighting " + Foe.Name);
 
     while (PlayerCharacter.Hp > 0 && Foe.Hp > 0)
-    { 
+    {
         Console.WriteLine("It is your turn, what would you like to do?");
         Console.WriteLine("1) Attack 2) Bag 3) Run");
         input = Console.ReadLine();
@@ -112,13 +114,15 @@ void Fight(Character target)
             Console.WriteLine("It is the foes turn. they attack!");
             if (Foe.Hp > 0)
             {
-            Foe.Attack(PlayerCharacter);
+                Foe.Attack(PlayerCharacter);
             }
-        } else if (input == "2")
+        }
+        else if (input == "2")
         {
             RefreshScreen();
             Inventory();
-        } else if (input == "3")
+        }
+        else if (input == "3")
         {
             Foe.ChangeHealth(-Foe.Hp);
         }
@@ -134,7 +138,8 @@ void Fight(Character target)
         PlayerCharacter.Value += Foe.Value;
         Console.WriteLine("You gained " + Foe.Value + " gold and now have " + PlayerCharacter.Value + ".");
         Foe = null;
-    } else 
+    }
+    else
     {
         Console.WriteLine(PlayerCharacter.Name + " is dead.");
         GameOver();
@@ -150,7 +155,7 @@ void RefreshScreen()
 }
 
 void Shop()
-{ 
+{
     RefreshScreen();
     Console.WriteLine("This is the store");
     Console.WriteLine("You have " + PlayerCharacter.Value + " gold.");
@@ -174,17 +179,20 @@ void Shop()
             PlayerCharacter.Weapon = Weapons[0];
             PlayerCharacter.Value -= Weapons[0].Value;
             Console.WriteLine("You have equiped a Dagger and have " + PlayerCharacter.Value + " gold left.");
-        } else if ((input == "2") && (PlayerCharacter.Value >= Weapons[1].Value))
+        }
+        else if ((input == "2") && (PlayerCharacter.Value >= Weapons[1].Value))
         {
             PlayerCharacter.Weapon = Weapons[1];
             PlayerCharacter.Value -= Weapons[1].Value;
             Console.WriteLine("You have equiped a Short Sword and have " + PlayerCharacter.Value + " gold left.");
-        } else if ((input == "3") && (PlayerCharacter.Value >= Weapons[2].Value))
+        }
+        else if ((input == "3") && (PlayerCharacter.Value >= Weapons[2].Value))
         {
             PlayerCharacter.Weapon = Weapons[2];
             PlayerCharacter.Value -= Weapons[2].Value;
             Console.WriteLine("You have equiped a Long Sword and have " + PlayerCharacter.Value + " gold left.");
-        } else if ((input == "4") && (PlayerCharacter.Value >= Weapons[3].Value))
+        }
+        else if ((input == "4") && (PlayerCharacter.Value >= Weapons[3].Value))
         {
             PlayerCharacter.Weapon = Weapons[3];
             PlayerCharacter.Value -= Weapons[3].Value;
@@ -251,17 +259,20 @@ void Shop()
 
         if ((input == "1") && (PlayerCharacter.Value >= Potions[0].Value))
         {
-            PlayerSmPotion =+ 1;
+            PlayerSmPotion = +1;
             Console.WriteLine("You now have " + PlayerSmPotion + " small potions.");
-        } else if ((input == "2") && (PlayerCharacter.Value >= Potions[1].Value))
+        }
+        else if ((input == "2") && (PlayerCharacter.Value >= Potions[1].Value))
         {
-            PlayerPotion =+ 1;
+            PlayerPotion = +1;
             Console.WriteLine("You now have " + PlayerPotion + " medium potions.");
-        } else if ((input == "3") && (PlayerCharacter.Value >= Potions[3].Value))
+        }
+        else if ((input == "3") && (PlayerCharacter.Value >= Potions[3].Value))
         {
-            PlayerLgPotion =+ 1;
+            PlayerLgPotion = +1;
             Console.WriteLine("You now have " + PlayerLgPotion + " large potions.");
-        } else
+        }
+        else
         {
             Console.WriteLine("Invalid Option or not enough gold.");
             input = Console.ReadLine();
@@ -319,8 +330,9 @@ void Inventory()
         Console.WriteLine("You do not have any of those.");
         Console.ReadLine();
         Inventory();
-    } 
-    else {
+    }
+    else
+    {
         Console.WriteLine("Invalid Option");
     }
     Console.ReadLine();
@@ -393,153 +405,4 @@ while (game)
     }
 }
 
-
-//----------------------------------------------------------------------------|
-// Do I need to  move the class to a sepearte file?                    *******|
-//----------------------------------------------------------------------------|
-
-//Creates Character class
-
-public class Character
-{
-    public string Name { get; set; }
-    public int Hp { get; set; }
-    public int Str { get; set; }
-    public int Speed { get; set; }
-    public int Con { get; set; }
-    public int Res { get; set; }
-    public int Value { get; set; }
-    public Item Weapon { get; set; }
-    public Item Armor { get; set; }
-
-    //Character Constructor
-
-    public Character(string name, int hp, int str, int speed, int con, int res, int value, Item weapon, Item armor)
-    {
-        Name = name;
-        Hp = hp;
-        Str = str;
-        Speed = speed;
-        Con = con;
-        Res = res;
-        Value = value;
-        Weapon = weapon;
-        Armor = armor;
-    }
-
-    //Character Object Cloner to make a shallow clone 
-
-    public Character Clone()
-    {
-        return (Character) this.MemberwiseClone();
-    }
-
-
-    //Where we will put all of the methods of the character class.
-    
-    public void Attack(Character target)
-    {
-        Console.WriteLine(Name + " attacked " + target.Name);
-        target.ChangeHealth(Str + Weapon.Effect);
-        Console.WriteLine($"{Name} dealt {Str + Weapon.Effect} damage to {target.Name}");
-    }
-
-    public void ChangeHealth(int num)
-    {
-        Hp += num;
-    }
-
-}
-
-// Creates Player Subclass
-
-public class Player : Character
-{
-    public int Xp { get; set; }
-    public int Level { get; set; }
-    public List<Item> Bag { get; set; }
-    public Player(string name, int hp, int str, int speed, int con, int res, int value, Item weapon, Item armor, int xp, int level, List<Item> bag)
-        : base(name, hp, str, speed, con, res, value, weapon, armor)
-    {
-        Xp = xp;
-        Level = level;
-        Bag = bag;
-    }
-
-    void StatIncrease(int i)
-    {
-        bool finished = false;
-        while (finished != true)
-        {
-            Console.WriteLine($"You have {i} stat points left. What would you like to increase?");
-            Console.WriteLine("1) Strength 2) Speed 3) Constitution 4) Resistance");
-            string input = Console.ReadLine();
-            if (input == "1")
-            {
-                Str += 1;
-                finished = true;
-            }
-            else if (input == "2")
-            {
-                Speed += 1;
-                finished = true;
-            }
-            else if (input == "3")
-            {
-                Con += 1;
-                finished = true;
-            }
-            else if (input == "4")
-            {
-                Res += 1;
-                finished = true;
-            }
-            else
-            {
-                Console.WriteLine("Invalid Option");
-            };
-        }
-    }
-
-    void LevelUp()
-    {
-        for (int i = 3; i >= 1; i--)
-        {
-            Level++;
-            StatIncrease(i);
-        }
-    }
-
-    public void GainXp(int mobXp)
-    {
-        Xp += mobXp;
-        if (Xp <= Math.Pow(10, Level) && (Level < 10))
-        {
-            LevelUp();
-        } else if (Xp < 0)
-        {
-
-        }
-
-    } }
-
-// Creates Item Class
-
-public class Item
-{
-    public string Type { get; set; }
-    public string Name { get; set; }
-    public int Effect { get; set; }
-    public int Value { get; set; }
-
-    // Weapon Constructor
-
-    public Item(string type, string name, int effect, int value)
-    {
-        Type = type;
-        Name = name;
-        Effect = effect;
-        Value = value;
-    }
-}
 
