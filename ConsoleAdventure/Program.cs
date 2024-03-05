@@ -3,32 +3,51 @@
 //----------------------------------------------------------------------------|
 
 using ConsoleAdventure;
-using System.Reflection;
-using System.Text.Json;
 
 bool game = true;
 string input;
-Character Foe;
 
-// Initializes Lists for Characters and Items then fills the Lists from Json files
-
-List<Item> Weapons = new List<Item>();
-List<Item> Armors = new List<Item>();
-List<Item> Potions = new List<Item>();
-List<Character> Characters = new List<Character>();
-
-// Creates random to use throughout code
+//Main Loop of the game.
 
 Random random = new Random();
 
-ReadJson();
+
+// Create Weapons, Armor, and Potions and adds usable items to lists
+
+Item Unarmed = new Item("Weapon", "Unarmed", 1, 0);
+Item Dagger = new Item("Weapon", "Dagger", 2, 5);
+Item ShortSword = new Item("Weapon", "Short Sword", 4, 10);
+Item LongSwort = new Item("Weapon", "Long Sword", 6, 15);
+Item Claymore = new Item("Weapon", "Claymore", 8, 20);
+
+List<Item> Weapons = new List<Item>();
+Weapons.Add(Dagger);
+Weapons.Add(ShortSword);
+Weapons.Add(LongSwort);
+Weapons.Add(Claymore);
+
+Item Unarmored = new Item("Armor", "Unarmored", 0, 0);
+Item Leather = new Item("Armor", "Leather", 2, 5);
+Item Chainmail = new Item("Armor", "Chainmail", 4, 10);
+Item PlateArmor = new Item("Armor", "Plate Armor", 6, 20);
+
+List<Item> Armors = new List<Item>();
+Armors.Add(Leather);
+Armors.Add(Chainmail);
+Armors.Add(PlateArmor);
+
+Item SmallPotion = new Item("Potion", "Small Potion", 5, 3);
+Item MediumPotion = new Item("Potion", "Medium Potion", 10, 6);
+Item LargePotion = new Item("Potion", "Large Potion", 15, 9);
+
+List<Item> Potions = new List<Item>();
+Potions.Add(SmallPotion);
+Potions.Add(MediumPotion);
+Potions.Add(LargePotion);
 
 //Makes the Player and all Monsters of the Character class. And Create Players Inventory
-Item Unarmed = new Item("Weapon", "Unarmed", 1, 0);
-Item Unarmored = new Item("Armor", "Unarmored", 1, 0);
 List<Item> PlayerInventory = new List<Item>();
-Character Player = Characters[0];
-Player PlayerCharacter = new Player(Player.Name, Player.Hp, Player.Str, Player.Speed, Player.Con, Player.Res, Player.Value, Player.Weapon, Player.Armor, 0, 1, PlayerInventory);
+Player PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored, 0, 0, PlayerInventory);
 
 // Ints to store the amount of potions the player has
 
@@ -36,8 +55,33 @@ int PlayerSmPotion = 0;
 int PlayerPotion = 0;
 int PlayerLgPotion = 0;
 
+//----------------------------------------------------------------------------|
+// Should I make a subclass for mobs?? Maybe add them in while creating mobs?  *******|
+//----------------------------------------------------------------------------|
 
+Character Empty = new Character(" ", 0, 0, 0, 0, 0, 0, Unarmed, Unarmored);
+Character Foe = Empty;
 
+Character Kobold = new Character("Kobold", 2, 1, 1, 1, 1, 1, Unarmed, Unarmored);
+Character Goblin = new Character("Goblin", 1, 2, 5, 3, 3, 2, Unarmed, Unarmored);
+Character Orc = new Character("Orc", 2, 2, 5, 3, 3, 4, Unarmed, Unarmored);
+Character Ogre = new Character("Ogre", 3, 2, 5, 3, 3, 8, Unarmed, Unarmored);
+Character Bandit = new Character("Bandit", 4, 2, 5, 3, 3, 16, Unarmed, Unarmored);
+Character BanditCaptain = new Character("Bandit Captain", 5, 2, 5, 3, 3, 32, Unarmed, Unarmored);
+Character Giant = new Character("Giant", 10, 10, 2, 10, 2, 64, Unarmed, Unarmored);
+Character Goliath = new Character("Goliath", 15, 12, 2, 10, 10, 128, Unarmed, Unarmored);
+Character Roc = new Character("Roc", 12, 14, 14, 8, 10, 256, Unarmed, Unarmored);
+Character Dragon = new Character("Dragon", 6, 2, 5, 3, 3, 512, Unarmed, Unarmored);
+
+//Adds all of the Monsters into a Monsters List
+
+List<Character> Monsters = new List<Character>();
+Monsters.Add(Goblin);
+Monsters.Add(Orc);
+Monsters.Add(Ogre);
+Monsters.Add(Bandit);
+Monsters.Add(BanditCaptain);
+Monsters.Add(Dragon);
 
 // Creats all methods for the game loop
 
@@ -101,7 +145,7 @@ void Fight(Character target)
         GameOver();
     }
     Console.ReadLine();
-    Foe = null;
+    Foe = Empty;
 }
 
 void RefreshScreen()
@@ -262,23 +306,23 @@ void Inventory()
     }
     else if ((input == "3") && (PlayerSmPotion > 0))
     {
-        PlayerCharacter.ChangeHealth(Potions[0].Value);
+        PlayerCharacter.ChangeHealth(SmallPotion.Value);
         PlayerSmPotion -= 1;
-        Console.WriteLine($"You have used a small health potion to heal {Potions[0].Value} Hp");
+        Console.WriteLine($"You have used a small health potion to heal {SmallPotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
     }
     else if ((input == "4") && (PlayerPotion > 0))
     {
-        PlayerCharacter.ChangeHealth(Potions[1].Value);
+        PlayerCharacter.ChangeHealth(MediumPotion.Value);
         PlayerPotion -= 1;
-        Console.WriteLine($"You have used a medium health potion to heal {Potions[1].Value} Hp");
+        Console.WriteLine($"You have used a medium health potion to heal {MediumPotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
     }
     else if ((input == "5") && (PlayerLgPotion > 0))
     {
-        PlayerCharacter.ChangeHealth(Potions[2].Value);
+        PlayerCharacter.ChangeHealth(LargePotion.Value);
         PlayerLgPotion -= 1;
-        Console.WriteLine($"You have used a small health potion to heal {Potions[2].Value} Hp");
+        Console.WriteLine($"You have used a small health potion to heal {LargePotion.Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
     }
     else if (((input == "3") && (PlayerSmPotion <= 0)) || ((input == "4") && (PlayerPotion <= 0)) || ((input == "5") && (PlayerLgPotion <= 0)))
@@ -306,8 +350,6 @@ void Info()
     Console.WriteLine($"Player Gold: {PlayerCharacter.Value}");
 }
 
-//Main Loop of the game.
-
 while (game)
 {
 
@@ -316,15 +358,12 @@ while (game)
     RefreshScreen();
     Console.WriteLine("Press Enter to Start");
     Console.ReadLine();
-    ReadJson();
 
     //Controls flow of Players choice through the game.
 
     //----------------------------------------------------------------------------|
     // Is it better to use a bool or simply while (true) and break?        *******|
     //----------------------------------------------------------------------------|
-
-
 
     bool choice = true;
     while (choice)
@@ -338,7 +377,7 @@ while (game)
         RefreshScreen();
         if (input == "1")
         {
-            Character target = Characters[random.Next(2, Characters.Count)];
+            Character target = Monsters[random.Next(0, Monsters.Count)];
             Fight(target);
             choice = false;
 
@@ -367,26 +406,3 @@ while (game)
 }
 
 
-// Creates the method used to read the objects from files
-
-void ReadJson()
-{
-    string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-    string assemblyPath = Path.GetDirectoryName(assemblyLocation);
-
-    //string WeaponFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Weapons.json");
-    string WeaponFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Weapons.json"));
-    Weapons = JsonSerializer.Deserialize<List<Item>>(WeaponFile);
-
-    //string ArmorFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Armors.json");
-    string ArmorFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Armors.json"));
-    Armors = JsonSerializer.Deserialize<List<Item>>(ArmorFile);
-
-    //string PotionFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Potions.json");
-    string PotionFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Potions.json"));
-    Potions = JsonSerializer.Deserialize<List<Item>>(PotionFile);
-
-    //string CharacterFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Monsters.json");
-    string CharacterFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Monsters.json"));
-    Characters = JsonSerializer.Deserialize<List<Character>>(CharacterFile);
-}
