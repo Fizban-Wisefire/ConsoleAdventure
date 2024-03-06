@@ -4,6 +4,7 @@
 
 using ConsoleAdventure;
 using System.Text.Json;
+using System.Reflection;
 
 bool game = true;
 string input;
@@ -314,7 +315,6 @@ while (game)
     RefreshScreen();
     Console.WriteLine("Press Enter to Start");
     Console.ReadLine();
-    ReadJson();
 
     //Controls flow of Players choice through the game.
 
@@ -329,7 +329,6 @@ while (game)
     {
 
         RefreshScreen();
-        ReadJson();
 
         Console.WriteLine("What would you like to do? 1)Fight! 2)Shop 3)Inventory 4)Info");
 
@@ -367,18 +366,20 @@ while (game)
 
 
 // Creates the method used to read the objects from files
-
 void ReadJson()
 {
-    string WeaponFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Weapons.json");
+    string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+    string assemblyPath = Path.GetDirectoryName(assemblyLocation);
+
+    string WeaponFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Weapons.json"));
     Weapons = JsonSerializer.Deserialize<List<Item>>(WeaponFile);
 
-    string ArmorFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Armors.json");
+    string ArmorFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Armors.json"));
     Armors = JsonSerializer.Deserialize<List<Item>>(ArmorFile);
 
-    string PotionFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Potions.json");
+    string PotionFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Potions.json"));
     Potions = JsonSerializer.Deserialize<List<Item>>(PotionFile);
 
-    string CharacterFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Monsters.json");
+    string CharacterFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Monsters.json"));
     Monsters = JsonSerializer.Deserialize<List<Character>>(CharacterFile);
 }
