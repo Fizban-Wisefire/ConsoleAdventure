@@ -66,7 +66,6 @@ void Fight(Character target)
                 Console.WriteLine($"You have deafeted the {Foe.Name}!");
                 Console.WriteLine($"They dropped {Foe.Value} gold.");
             }
-            Console.WriteLine("It is the foes turn. they attack!");
             if (Foe.Hp > 0)
             {
                 Foe.Attack(PlayerCharacter);
