@@ -4,6 +4,9 @@
 
 using ConsoleAdventure;
 using System.Text.Json;
+using System.Reflection;
+using Microsoft.Data.Sqlite;
+
 
 bool game = true;
 string input;
@@ -20,13 +23,14 @@ List<Character> Monsters = new List<Character>();
 
 Random random = new Random();
 
-ReadJson();
+// ReadJson();
+// CreateDB(Monsters, Weapons, Armors, Potions);
+ReadDB();
 
 //Makes the Player and all Monsters of the Character class. And Create Players Inventory
-Item Unarmed = new Item("Weapon", "Unarmed", 1, 0);
-Item Unarmored = new Item("Armor", "Unarmored", 1, 0);
+
 List<Item> PlayerInventory = new List<Item>();
-Player PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored, 0, 0, PlayerInventory);
+Player PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Weapons[0], Armors[0], 0, 0, PlayerInventory);
 
 // Ints to store the amount of potions the player has
 
@@ -65,7 +69,6 @@ void Fight(Character target)
                 Console.WriteLine($"You have deafeted the {Foe.Name}!");
                 Console.WriteLine($"They dropped {Foe.Value} gold.");
             }
-            Console.WriteLine("It is the foes turn. they attack!");
             if (Foe.Hp > 0)
             {
                 Foe.Attack(PlayerCharacter);
@@ -314,7 +317,6 @@ while (game)
     RefreshScreen();
     Console.WriteLine("Press Enter to Start");
     Console.ReadLine();
-    ReadJson();
 
     //Controls flow of Players choice through the game.
 
@@ -329,7 +331,6 @@ while (game)
     {
 
         RefreshScreen();
-        ReadJson();
 
         Console.WriteLine("What would you like to do? 1)Fight! 2)Shop 3)Inventory 4)Info");
 
@@ -366,19 +367,231 @@ while (game)
 }
 
 
-// Creates the method used to read the objects from files
-
+// Creates the method used to read the objects from files.
 void ReadJson()
 {
-    string WeaponFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Weapons.json");
+    string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+    string assemblyPath = Path.GetDirectoryName(assemblyLocation);
+
+    string WeaponFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Weapons.json"));
     Weapons = JsonSerializer.Deserialize<List<Item>>(WeaponFile);
 
-    string ArmorFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Armors.json");
+    string ArmorFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Armors.json"));
     Armors = JsonSerializer.Deserialize<List<Item>>(ArmorFile);
 
-    string PotionFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Potions.json");
+    string PotionFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Potions.json"));
     Potions = JsonSerializer.Deserialize<List<Item>>(PotionFile);
 
-    string CharacterFile = File.ReadAllText("C:\\Users\\Patrick\\source\\repos\\ConsoleAdventure\\ConsoleAdventure\\Files\\Monsters.json");
+    string CharacterFile = File.ReadAllText(Path.Combine(assemblyPath, ".\\Files\\Monsters.json"));
     Monsters = JsonSerializer.Deserialize<List<Character>>(CharacterFile);
+    Console.WriteLine(Monsters);
+}
+
+// Data Base Methods
+
+// Used to create a database from the local json files.
+void CreateDB(List<Character> Monsters, List<Item> Weapons, List<Item> Armors, List<Item> Potions)
+{
+    Console.ReadLine();
+    using (var connection = new SqliteConnection("Data Source=adventure.db"))
+    {
+        
+        connection.Open();
+
+        // Creates all tables for characters and items
+        var command = connection.CreateCommand();
+        command.CommandText =
+        @"
+                    CREATE TABLE character (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        hp INTEGER,
+                        str INTEGER,
+                        speed INTEGER,
+                        con INTEGER,
+                        res INTEGER,
+                        value INTEGER,
+                        weapon STRING,
+                        armor STRING NOT NULL
+                    );
+
+                    CREATE TABLE weapon (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        type TEXT NOT NULL,
+                        name TEXT NOT NULL,
+                        effect INTEGER NOT NULL,
+                        value INTEGER NOT NULL
+                    );
+
+                    CREATE TABLE armor (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        type TEXT NOT NULL,
+                        name TEXT NOT NULL,
+                        effect INTEGER NOT NULL,
+                        value INTEGER NOT NULL
+                    );
+
+                    CREATE TABLE potion (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        type TEXT NOT NULL,
+                        name TEXT NOT NULL,
+                        effect INTEGER NOT NULL,
+                        value INTEGER NOT NULL
+                    );
+                ";
+        command.ExecuteNonQuery();
+
+
+
+        // Enters all characters in the character table
+        for (int i = 0; i < Monsters.Count; i++)
+        {
+            command = connection.CreateCommand();
+            //                    Console.WriteLine(monsters[i].Value);
+            //                    Console.ReadLine();
+            command.CommandText =
+                @"
+                            INSERT INTO character (name, hp, str, speed, con, res, value, weapon, armor)
+                            VALUES ($name, $hp, $str, $speed, $con, $res, $value, $Weapon, $Armor)
+                        ";
+            command.Parameters.AddWithValue("$name", Monsters[i].Name);
+            command.Parameters.AddWithValue("$hp", Monsters[i].Hp);
+            command.Parameters.AddWithValue("$str", Monsters[i].Str);
+            command.Parameters.AddWithValue("$speed", Monsters[i].Speed);
+            command.Parameters.AddWithValue("$con", Monsters[i].Con);
+            command.Parameters.AddWithValue("$res", Monsters[i].Res);
+            command.Parameters.AddWithValue("$value", Monsters[i].Value);
+            command.Parameters.AddWithValue("$Weapon", Monsters[i].Weapon.Name);
+            command.Parameters.AddWithValue("$Armor", Monsters[i].Armor.Name);
+            command.ExecuteNonQuery();
+        }
+
+        // Enters all weapons in the character table
+        for (int i = 0; i < Weapons.Count; i++)
+        {
+            command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                            INSERT INTO weapon (type, name, effect, value)
+                            VALUES ($type, $name, $effect, $value)
+                        ";
+            command.Parameters.AddWithValue("$type", Weapons[i].Type);
+            command.Parameters.AddWithValue("$name", Weapons[i].Name);
+            command.Parameters.AddWithValue("$effect", Weapons[i].Effect);
+            command.Parameters.AddWithValue("$value", Weapons[i].Value);
+            command.ExecuteNonQuery();
+        }
+
+        // Enters all armors in the character table
+        for (int i = 0; i < Armors.Count; i++)
+        {
+            command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                            INSERT INTO armor (type, name, effect, value)
+                            VALUES ($type, $name, $effect, $value)
+                        ";
+            command.Parameters.AddWithValue("$type", Armors[i].Type);
+            command.Parameters.AddWithValue("$name", Armors[i].Name);
+            command.Parameters.AddWithValue("$effect", Armors[i].Effect);
+            command.Parameters.AddWithValue("$value", Armors[i].Value);
+            command.ExecuteNonQuery();
+        }
+
+        // Enters all potions in the character table
+        for (int i = 0; i < Potions.Count; i++)
+        {
+            command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                            INSERT INTO potion (type, name, effect, value)
+                            VALUES ($type, $name, $effect, $value)
+                        ";
+            command.Parameters.AddWithValue("$type", Potions[i].Type);
+            command.Parameters.AddWithValue("$name", Potions[i].Name);
+            command.Parameters.AddWithValue("$effect", Potions[i].Effect);
+            command.Parameters.AddWithValue("$value", Potions[i].Value);
+            command.ExecuteNonQuery();
+        }
+    }
+}
+
+// Used to read the database to populate objects.
+void ReadDB()
+{
+    using (var connection = new SqliteConnection("Data Source=adventure.db"))
+    {
+        connection.Open();
+        
+        
+        // Creates Weapons list
+        var weaponCommand = connection.CreateCommand();
+        weaponCommand.CommandText =
+            @"
+                SELECT * 
+                FROM weapon
+            ";
+        using (var reader = weaponCommand.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                Weapons.Add(new Item(reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4)));
+            }
+            weaponCommand.Dispose();
+        }
+
+
+        // Creates Armors list
+        var armorCommand = connection.CreateCommand();
+        armorCommand.CommandText =
+            @"
+                SELECT * 
+                FROM armor
+            ";
+        using (var reader = armorCommand.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                Armors.Add(new Item(reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4)));
+            }
+            armorCommand.Dispose();
+        }
+
+
+
+        // Creates Potions list
+        var potionCommand = connection.CreateCommand();
+        potionCommand.CommandText =
+            @"
+                SELECT * 
+                FROM potion
+            ";
+        using (var reader = potionCommand.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                Potions.Add(new Item(reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4)));
+            }
+        }
+        potionCommand.Dispose();
+
+
+
+        // Creates Monsters list
+        var monsterCommand = connection.CreateCommand();
+        monsterCommand.CommandText =
+            @"
+                SELECT * 
+                FROM character
+            ";
+        using (var reader = monsterCommand.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                Monsters.Add(new Character(reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), Weapons[0], Armors[0]));
+            }
+        }
+        monsterCommand.Dispose();
+        connection.Dispose();
+    }
 }

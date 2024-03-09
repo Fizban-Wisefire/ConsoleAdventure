@@ -73,5 +73,12 @@ namespace ConsoleAdventure
             }
 
         }
+
+        public override void Attack(Character target)
+        {
+            Console.WriteLine($"You attacked {target.Name}.");
+            target.ChangeHealth(-(Str + Weapon.Effect));
+            Console.WriteLine($"You dealt {Str + Weapon.Effect} damage to {target.Name}.");
+        }
     }
 }

@@ -40,11 +40,11 @@ namespace ConsoleAdventure
 
         //Where we will put all of the methods of the character class.
 
-        public void Attack(Character target)
+        public virtual void Attack(Character target)
         {
-            Console.WriteLine(Name + " attacked " + target.Name);
+            Console.WriteLine($"{Name} attacked target.Name.");
             target.ChangeHealth(-(Str + Weapon.Effect));
-            Console.WriteLine($"{Name} dealt {Str + Weapon.Effect} damage to {target.Name}");
+            Console.WriteLine($"{Name} dealt {Str + Weapon.Effect} damage to {target.Name}.");
         }
 
         public void ChangeHealth(int num)
