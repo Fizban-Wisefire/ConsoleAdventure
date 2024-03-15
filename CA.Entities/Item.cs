@@ -1,8 +1,11 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ConsoleAdventure
+namespace CA.Entities
 {
-
     // Creates Item Class
 
     public class Item
@@ -22,5 +25,4 @@ namespace ConsoleAdventure
             Value = value;
         }
     }
-
 }

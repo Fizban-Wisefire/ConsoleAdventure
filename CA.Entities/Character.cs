@@ -1,5 +1,4 @@
-﻿
-namespace ConsoleAdventure
+﻿namespace CA.Entities
 {
     //Creates Character class
 
