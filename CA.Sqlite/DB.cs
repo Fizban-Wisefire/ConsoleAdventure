@@ -210,7 +210,7 @@ namespace CA.Sqlite
         // Creates Armors List
         public List<Character> ReadMonsters(List<Item> Weapons, List<Item> Armors)
         {
-            List<Character> monsters = new List<Character>;
+            List<Character> monsters = new List<Character>();
             using (var connection = new SqliteConnection("Data Source=adventure.db"))
             {
                 connection.Open();

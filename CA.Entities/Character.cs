@@ -1,4 +1,6 @@
-﻿namespace CA.Entities
+﻿
+
+namespace CA.Entities
 {
     //Creates Character class
 
@@ -31,7 +33,6 @@
         }
 
         //Character Object Cloner to make a shallow clone 
-
         public Character Clone()
         {
             return (Character)this.MemberwiseClone();
@@ -40,13 +41,19 @@
 
         //Where we will put all of the methods of the character class.
 
+        public delegate int TestDelegate();
 
+        public int CalcDamage()
+        {
+            return (Str + Weapon.Effect);
+        }
 
      
-        public virtual void Attack(Character target)
+        public virtual void Attack(Character target, TestDelegate Damage)
         {
+            Damage = CalcDamage;
             Console.WriteLine($"{Name} attacked target.Name.");
-            target.ChangeHealth(-Str + Weapon.Effect);
+            target.ChangeHealth(-Damage());
             Console.WriteLine($"{Name} dealt {Str + Weapon.Effect} damage to {target.Name}.");
         }
 

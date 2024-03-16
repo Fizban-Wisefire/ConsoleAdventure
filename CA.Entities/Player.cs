@@ -81,8 +81,9 @@ namespace CA.Entities
 
         public override void Attack(Character target)
         {
+
             Console.WriteLine($"You attacked {target.Name}.");
-            target.ChangeHealth(-(Str + Weapon.Effect));
+            target.ChangeHealth(-CalcDamage());
             Console.WriteLine($"You dealt {Str + Weapon.Effect} damage to {target.Name}.");
         }
     }
