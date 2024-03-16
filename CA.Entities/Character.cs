@@ -27,6 +27,7 @@
             Value = value;
             Weapon = weapon;
             Armor = armor;
+
         }
 
         //Character Object Cloner to make a shallow clone 
@@ -39,10 +40,13 @@
 
         //Where we will put all of the methods of the character class.
 
+
+
+     
         public virtual void Attack(Character target)
         {
             Console.WriteLine($"{Name} attacked target.Name.");
-            target.ChangeHealth(-(Str + Weapon.Effect));
+            target.ChangeHealth(-Str + Weapon.Effect);
             Console.WriteLine($"{Name} dealt {Str + Weapon.Effect} damage to {target.Name}.");
         }
 

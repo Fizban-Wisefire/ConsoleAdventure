@@ -11,11 +11,6 @@ string input;
 // Initializes Lists for Characters and Items then fills the Lists from Json files
 Character Foe;
 
-List<Item> Weapons = new List<Item>();
-List<Item> Armors = new List<Item>();
-List<Item> Potions = new List<Item>();
-List<Character> Monsters = new List<Character>();
-
 // Creates random to use throughout code
 
 Random random = new Random();
@@ -24,10 +19,10 @@ Random random = new Random();
 DB dB = new DB();
 
 //Updates Object Lists with Sqlite Methods
-Weapons = dB.ReadWeapons(Weapons);
-Armors = dB.ReadArmors(Armors);
-Potions = dB.ReadPotions(Potions);
-Monsters = dB.ReadMonsters(Monsters, Weapons, Armors);
+List<Item> Weapons = dB.ReadWeapons();
+List<Item> Armors = dB.ReadArmors();
+List<Item> Potions = dB.ReadPotions();
+List<Character> Monsters = dB.ReadMonsters(Weapons, Armors);
 
 
 //Makes the Player and all Monsters of the Character class. And Create Players Inventory

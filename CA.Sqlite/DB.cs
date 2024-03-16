@@ -133,8 +133,9 @@ namespace CA.Sqlite
         }
 
         // Creates Weapons List
-        public List<Item> ReadWeapons(List<Item> weapons)
+        public List<Item> ReadWeapons()
         {
+            List<Item> weapons = new List<Item>();
             using (var connection = new SqliteConnection("Data Source=adventure.db"))
             {
                 connection.Open();
@@ -157,8 +158,9 @@ namespace CA.Sqlite
         }
 
         // Creates Armors List
-        public List<Item> ReadArmors(List<Item> armors)
+        public List<Item> ReadArmors()
         {
+            List<Item> armors = new List<Item>();
             using (var connection = new SqliteConnection("Data Source=adventure.db"))
             {
                 connection.Open();
@@ -181,8 +183,9 @@ namespace CA.Sqlite
         }
 
         // Creates Armors List
-        public List<Item> ReadPotions(List<Item> potions)
+        public List<Item> ReadPotions()
         {
+            List<Item> potions = new List<Item>();
             using (var connection = new SqliteConnection("Data Source=adventure.db"))
             {
                 connection.Open();
@@ -205,8 +208,9 @@ namespace CA.Sqlite
         }
 
         // Creates Armors List
-        public List<Character> ReadMonsters(List<Character> monsters, List<Item> Weapons, List<Item> Armors)
+        public List<Character> ReadMonsters(List<Item> Weapons, List<Item> Armors)
         {
+            List<Character> monsters = new List<Character>;
             using (var connection = new SqliteConnection("Data Source=adventure.db"))
             {
                 connection.Open();
