@@ -49,8 +49,9 @@ namespace CA.Entities
         }
 
      
-        public virtual void Attack(Character target, TestDelegate Damage)
+        public virtual void Attack(Character target)
         {
+            TestDelegate Damage;
             Damage = CalcDamage;
             Console.WriteLine($"{Name} attacked target.Name.");
             target.ChangeHealth(-Damage());

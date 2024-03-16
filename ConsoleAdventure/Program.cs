@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Reflection;
 using CA.Entities;
 using CA.Sqlite;
+using static CA.Entities.Character;
 
 
 bool game = true;
