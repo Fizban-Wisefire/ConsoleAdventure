@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ConsoleAdventure/bin/Debug/net8.0/adventure.db
