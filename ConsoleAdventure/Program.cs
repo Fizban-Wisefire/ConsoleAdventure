@@ -23,14 +23,18 @@ DB dB = new DB();
 List<Item> Weapons = dB.ReadWeapons();
 List<Item> Armors = dB.ReadArmors();
 List<Item> Potions = dB.ReadPotions();
-List<Character> Monsters = dB.ReadMonsters(Weapons, Armors);
+List<Location> Locations = dB.ReadLocations();
+List<Character> Monsters = dB.ReadMonsters(Weapons, Armors, Locations);
 
 
 //Makes the Player and all Monsters of the Character class. And Create Players Inventory
 Item Unarmed = new Item("Weapon", "Unarmed", 1, 0);
 Item Unarmored = new Item("Armor", "Unarmored", 1, 0);
 List<Item> PlayerInventory = new List<Item>();
-Player PlayerCharacter = new Player("Player", 5, 2, 2, 2, 2, 2, Unarmed, Unarmored, 0, 0, PlayerInventory);
+Player PlayerCharacter = dB.ReadPlayer(Weapons, Armors);
+
+// Sets Player Locations *******************************
+PlayerCharacter.CurrentLocation = Locations[0];
 
 // Ints to store the amount of potions the player has
 
@@ -38,7 +42,7 @@ int PlayerSmPotion = 0;
 int PlayerPotion = 0;
 int PlayerLgPotion = 0;
 
-
+dB.AddToDB(PlayerCharacter, Weapons, Armors, Locations);
 
 
 // Creats all methods for the game loop
@@ -47,6 +51,94 @@ void GameOver()
 {
     Console.WriteLine("!!!!!GAME OVER!!!!!");
     game = false;
+}
+
+void Inn()
+{
+    Console.WriteLine("You are in the Inn, what would you like to do?");
+    Console.WriteLine("1) Eat for 5gp 2) Sleep for 25gp 3) Ask for quest");
+    input = Console.ReadLine();
+    if ((input == "1") && (PlayerCharacter.Value >= 5))
+    {
+        Console.WriteLine("You eat and regain 10 health");
+        PlayerCharacter.Value -= 5;
+        PlayerCharacter.ChangeHealth(10);
+    }
+    else if ((input == "2") && (PlayerCharacter.Value >= 25))
+    {
+        PlayerCharacter.ChangeHealth(50);
+    }
+    else if (input == "3")
+    {
+        Console.WriteLine("Sorry I don't have any quests at the moment");
+    }
+    else
+    {
+        Console.WriteLine("Invalid Option or insufficient Funds");
+    }
+}
+
+void Well()
+{
+    Console.WriteLine("You walk up to the towns well, what would you like to do?");
+    Console.WriteLine("1) Throw in a coin 2) Leave");
+    input = Console.ReadLine();
+    if ((input == "1") && (PlayerCharacter.Value >= 1));
+    {
+        Console.WriteLine("You throw a coin into the well and wish for safety.");
+
+        // ADD SAVE FUNCTION HERE ****************
+    }
+}
+
+void Travel()
+{
+    // Handles Travel if there is both a previous and a next location attached to the Current Location
+    if (PlayerCharacter.CurrentLocation.NextLocation > Locations.Count) 
+    {
+        Location currentLoc = PlayerCharacter.CurrentLocation;
+        do
+        {
+            RefreshScreen();
+            Console.WriteLine("Where would you like to go?");
+            Console.WriteLine($"1) {Locations[PlayerCharacter.CurrentLocation.PrevLocation].Name} 2) {Locations[PlayerCharacter.CurrentLocation.NextLocation].Name} 3) Cancel");
+            input = Console.ReadLine();
+            if (input == "1")
+            {
+                PlayerCharacter.CurrentLocation = Locations[PlayerCharacter.CurrentLocation.PrevLocation];
+            }
+            else if (input == "2")
+            {
+                PlayerCharacter.CurrentLocation = Locations[PlayerCharacter.CurrentLocation.NextLocation];
+            }
+            else if (input == "3")
+            {
+                break;
+            }
+        }
+        while (PlayerCharacter.CurrentLocation == currentLoc);
+        }
+    // Handles Travel if there is only a previous location attached to the Current Location
+    else
+    {
+        Location currentLoc = PlayerCharacter.CurrentLocation;
+        do
+        {
+            RefreshScreen();
+            Console.WriteLine("Where would you like to go?");
+            Console.WriteLine($"1) {Locations[PlayerCharacter.CurrentLocation.PrevLocation].Name} 2) Cancel");
+            input = Console.ReadLine();
+            if (input == "1")
+            {
+                PlayerCharacter.CurrentLocation = Locations[PlayerCharacter.CurrentLocation.PrevLocation];
+            } else if (input == "2")
+            {
+                break;
+            }
+        }
+        while (PlayerCharacter.CurrentLocation == currentLoc);
+
+    }
 }
 
 void Fight(Character target)
@@ -109,6 +201,7 @@ void RefreshScreen()
 {
     Console.Clear();
     Console.WriteLine("          ----------   CONSOLE ADVENTURE   ----------          ");
+    Console.WriteLine($"          {PlayerCharacter.CurrentLocation.Name} {PlayerCharacter.Depth}                                                    ");
 }
 
 void Shop()
@@ -224,7 +317,7 @@ void Shop()
             PlayerPotion = +1;
             Console.WriteLine("You now have " + PlayerPotion + " medium potions.");
         }
-        else if ((input == "3") && (PlayerCharacter.Value >= Potions[3].Value))
+        else if ((input == "3") && (PlayerCharacter.Value >= Potions[2].Value))
         {
             PlayerLgPotion = +1;
             Console.WriteLine("You now have " + PlayerLgPotion + " large potions.");
@@ -279,7 +372,7 @@ void Inventory()
     {
         PlayerCharacter.ChangeHealth(Potions[2].Value);
         PlayerLgPotion -= 1;
-        Console.WriteLine($"You have used a small health potion to heal {Potions[2].Value} Hp");
+        Console.WriteLine($"You have used a large health potion to heal {Potions[2].Value} Hp");
         Console.WriteLine($"You now have {PlayerCharacter.Hp}.");
     }
     else if (((input == "3") && (PlayerSmPotion <= 0)) || ((input == "4") && (PlayerPotion <= 0)) || ((input == "5") && (PlayerLgPotion <= 0)))
@@ -323,40 +416,98 @@ while (game)
     bool choice = true;
     while (choice)
     {
-
         RefreshScreen();
 
-        Console.WriteLine("What would you like to do? 1)Fight! 2)Shop 3)Inventory 4)Info");
-
-        input = Console.ReadLine();
-        RefreshScreen();
-        if (input == "1")
+        if (PlayerCharacter.CurrentLocation == Locations[0])
         {
-            Character target = Monsters[random.Next(2, Monsters.Count)];
-            Fight(target);
-            choice = false;
-
-        }
-        else if (input == "2")
-        {
-            Shop();
-            choice = false;
-        }
-        else if (input == "3")
-        {
-            Inventory();
-            choice = false;
-        }
-        else if (input == "4")
-        {
-            Info();
-            choice = false;
+            Console.WriteLine("You are in town, what would you like to do?");
+            Console.WriteLine("1) Vist 2) Leave 3) Bag 4) Info");
+            input = Console.ReadLine();
+            if (input == "1")
+            {
+                Console.WriteLine("Where would you like to go?");
+                Console.WriteLine("1) Store 2) Inn 3) Well");
+                input = Console.ReadLine();
+                if (input == "1")
+                {
+                    Inn();
+                }
+                else if (input == "2")
+                {
+                    Shop();
+                }
+                else if (input == "3")
+                {
+                    Well();
+                }
+            }
+            else if (input == "2")
+            {
+                Travel();
+            }
+            else if (input == "3")
+            {
+                Inventory();
+            }
+            else if (input == "4")
+            {
+                Info();
+            }
+            else
+            {
+                Console.WriteLine("Invalid Option!!");
+                Console.ReadLine();
+            }
         }
         else
         {
-            Console.WriteLine("INVALID OPTION");
-        }
+            Console.WriteLine($"You are in the {PlayerCharacter.CurrentLocation.Name}");
+            Console.WriteLine("What would you like to do? 1)Fight! 2)Leave 3)Inventory 4)Info");
 
+            input = Console.ReadLine();
+            RefreshScreen();
+            if (input == "1")
+            {
+                List<Character> foes = new List<Character>();
+                // Creates a LINQ Query to filter Monsters by Player Location
+                IEnumerable<Character> targetQuery =
+                    from foe in Monsters
+                    where foe.Locs.Contains(PlayerCharacter.CurrentLocation)
+                    select foe;
+
+                foreach (Character foe in targetQuery)
+                {
+                    foes.Add(foe);
+                }
+                foreach (Character foe in foes)
+                {
+                    Console.WriteLine(foe.Name);
+                }
+                Console.ReadLine();
+                Character target = foes[random.Next(2, Monsters.Count)];
+                Fight(target);
+                choice = false;
+
+            }
+            else if (input == "2")
+            {
+                Travel();
+            }
+            else if (input == "3")
+            {
+                Inventory();
+                choice = false;
+            }
+            else if (input == "4")
+            {
+                Info();
+                choice = false;
+            }
+            else
+            {
+                Console.WriteLine("INVALID OPTION");
+            }
+        }
     }
 }
 

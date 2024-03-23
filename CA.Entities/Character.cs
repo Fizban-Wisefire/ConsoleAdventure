@@ -15,6 +15,7 @@ namespace CA.Entities
         public int Value { get; set; }
         public Item Weapon { get; set; }
         public Item Armor { get; set; }
+        public List<Location> Locs { get; set; }
 
         //Character Constructor
 
@@ -29,7 +30,6 @@ namespace CA.Entities
             Value = value;
             Weapon = weapon;
             Armor = armor;
-
         }
 
         //Character Object Cloner to make a shallow clone 
@@ -41,7 +41,7 @@ namespace CA.Entities
 
         //Where we will put all of the methods of the character class.
 
-        public delegate int TestDelegate();
+        public delegate int DamageCalculator();
 
         public int CalcDamage()
         {
@@ -51,7 +51,7 @@ namespace CA.Entities
      
         public virtual void Attack(Character target)
         {
-            TestDelegate Damage;
+            DamageCalculator Damage;
             Damage = CalcDamage;
             Console.WriteLine($"{Name} attacked target.Name.");
             target.ChangeHealth(-Damage());

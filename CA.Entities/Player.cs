@@ -13,12 +13,16 @@ namespace CA.Entities
         public int Xp { get; set; }
         public int Level { get; set; }
         public List<Item> Bag { get; set; }
+        public int Depth { get; set; }
+        public Location CurrentLocation { get; set; }
+
         public Player(string name, int hp, int str, int speed, int con, int res, int value, Item weapon, Item armor, int xp, int level, List<Item> bag)
             : base(name, hp, str, speed, con, res, value, weapon, armor)
         {
             Xp = xp;
             Level = level;
             Bag = bag;
+            Depth = 1;
         }
 
         void StatIncrease(int i)
@@ -81,7 +85,7 @@ namespace CA.Entities
 
         public override void Attack(Character target)
         {
-            TestDelegate Damage;
+            DamageCalculator Damage;
             Damage = CalcDamage;
             Console.WriteLine($"You attacked {target.Name}.");
             target.ChangeHealth(-Damage());
